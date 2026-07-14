@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="BockShop.BLL/BockShop.BLL.csproj" />
+  <Project Path="BockShop.DAL/BockShop.DAL.csproj" />
+  <Project Path="BookShop.Api/BookShop.Api.csproj" />
+  <Project Path="BookShop.Domin/BookShop.Domain.csproj" />
+</Solution>
