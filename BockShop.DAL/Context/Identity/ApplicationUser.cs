@@ -16,5 +16,6 @@ namespace BockShop.DAL.Context.Identity
         public IEnumerable<Favorite>? favorites { get; set; }
         public IEnumerable<RefreshToken>? RefreshTokens { get; set; }
         public IEnumerable<CouponUsage>? CouponUsages { get; set; }
+        public IEnumerable<Order>? Orders { get; set; }
     }
 }

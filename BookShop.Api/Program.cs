@@ -24,7 +24,7 @@ namespace BookShop.Api
         public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
+            builder.Services.Configure();
             builder.Services.AddValidatorsFromAssembly(typeof(RequestFavoriteItemDtoValidator).Assembly);
 
             // Add services to the container.
@@ -46,14 +46,6 @@ namespace BookShop.Api
             builder.Services.AddOpenApi();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-            builder.Services.AddScoped<ICategoryService, CategoryService>();
-            builder.Services.AddScoped<IBookService, BookService>();
-            builder.Services.AddScoped<IAuthService, AuthService>();
-            builder.Services.AddScoped<ITokenService, JwtTokenService>();
-            builder.Services.AddScoped<IEmailService, EmailService>();
-            builder.Services.AddScoped<ICouponService, CouponService>();
-            builder.Services.AddTransient<IEmailSender , EmailSender>();
             builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
             var Option = builder.Configuration.GetSection("Jwt").Get<JwtOptions>();
             builder.Services.AddAuthentication(option =>
@@ -72,7 +64,7 @@ namespace BookShop.Api
                     ValidAudience = Option!.Audience,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Option.Key)),
                     RequireExpirationTime = true,
-                    ClockSkew =TimeSpan.Zero,
+                    ClockSkew = TimeSpan.Zero,
                 };
 
             });

@@ -4,6 +4,7 @@ using BockShop.DAL.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BockShop.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260714160313_AddColumninBook")]
+    partial class AddColumninBook
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -123,7 +126,7 @@ namespace BockShop.DAL.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshTokens", (string)null);
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("BookShop.Domain.Entities.Author", b =>
@@ -157,7 +160,7 @@ namespace BockShop.DAL.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Author", (string)null);
+                    b.ToTable("Author");
                 });
 
             modelBuilder.Entity("BookShop.Domain.Entities.Book", b =>
@@ -210,7 +213,7 @@ namespace BockShop.DAL.Migrations
 
                     b.HasIndex("PublisherId");
 
-                    b.ToTable("Books", (string)null);
+                    b.ToTable("Books");
                 });
 
             modelBuilder.Entity("BookShop.Domain.Entities.Cart", b =>
@@ -236,7 +239,7 @@ namespace BockShop.DAL.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("carts", (string)null);
+                    b.ToTable("carts");
                 });
 
             modelBuilder.Entity("BookShop.Domain.Entities.CartItem", b =>
@@ -265,7 +268,7 @@ namespace BockShop.DAL.Migrations
 
                     b.HasIndex("CartId");
 
-                    b.ToTable("CartItems", (string)null);
+                    b.ToTable("CartItems");
                 });
 
             modelBuilder.Entity("BookShop.Domain.Entities.Category", b =>
@@ -286,7 +289,7 @@ namespace BockShop.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("BookShop.Domain.Entities.Coupon", b =>
@@ -318,7 +321,7 @@ namespace BockShop.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Coupons", (string)null);
+                    b.ToTable("Coupons");
                 });
 
             modelBuilder.Entity("BookShop.Domain.Entities.CouponUsage", b =>
@@ -349,7 +352,7 @@ namespace BockShop.DAL.Migrations
 
                     b.HasIndex("userId");
 
-                    b.ToTable("CouponUsages", (string)null);
+                    b.ToTable("CouponUsages");
                 });
 
             modelBuilder.Entity("BookShop.Domain.Entities.Favorite", b =>
@@ -376,7 +379,7 @@ namespace BockShop.DAL.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Favorites", (string)null);
+                    b.ToTable("Favorites");
                 });
 
             modelBuilder.Entity("BookShop.Domain.Entities.Order", b =>
@@ -410,7 +413,7 @@ namespace BockShop.DAL.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("BookShop.Domain.Entities.OrderItem", b =>
@@ -450,7 +453,7 @@ namespace BockShop.DAL.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderItems", (string)null);
+                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("BookShop.Domain.Entities.Publisher", b =>
@@ -470,7 +473,7 @@ namespace BockShop.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Publisher", (string)null);
+                    b.ToTable("Publisher");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

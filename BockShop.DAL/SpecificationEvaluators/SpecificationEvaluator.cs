@@ -20,7 +20,8 @@ namespace BockShop.DAL.SpecificationEvaluators
                 foreach (var include in spec.Includes)
                     if (include is not null)
                         query = query.Include(include);
-
+     
+      
             if (spec.OrderBy is not null)
                 query = query.OrderBy(spec.OrderBy);
             if (spec.OrderByDescending is not null)

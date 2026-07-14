@@ -15,6 +15,7 @@ namespace BookShop.Domain.Entities
         public string ImageUrl { get; set; }
         public double Price { get; set; }
         public double Rate { get; set; }
+        public int Stock { get; set; }
         [ForeignKey(nameof(Author))]
         public int AuthorId { get; set; }
         public Author Author { get; set; }

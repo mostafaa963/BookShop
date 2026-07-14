@@ -12,7 +12,6 @@ namespace BockShop.DAL.Specifications
 
         public List<Expression<Func<T, object>>?>? Includes { get; }
             = new();
-
         public Expression<Func<T, object>>? OrderBy { get; protected set; }
 
         public Expression<Func<T, object>>? OrderByDescending { get; protected set; }

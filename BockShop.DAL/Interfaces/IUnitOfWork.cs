@@ -18,6 +18,8 @@ namespace BockShop.DAL.Interfaces
         IRepository<RefreshToken> RefreshToken { get; }
         IRepository<Coupon> Coupon { get; }
         IRepository<CouponUsage> CouponUsage { get; }
+        IRepository<Order> Order { get; }
+        IRepository<OrderItem> OrderItem { get; }
         Task<int> SaveChangeAsync();
 
     }

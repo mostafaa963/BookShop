@@ -31,6 +31,10 @@ namespace BockShop.DAL.UnitOfWork
 
         public IRepository<CouponUsage> CouponUsage { get; private set; }
 
+        public IRepository<Order> Order { get; private set; }
+
+        public IRepository<OrderItem> OrderItem { get; private set; }
+
         public UnitOfWork(ApplicationDbContext applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
@@ -44,6 +48,8 @@ namespace BockShop.DAL.UnitOfWork
             RefreshToken = new Repository<RefreshToken>(_applicationDbContext);
             Coupon = new Repository<Coupon>(_applicationDbContext);
             CouponUsage = new Repository<CouponUsage>(_applicationDbContext);
+            Order = new Repository<Order>(_applicationDbContext);
+            OrderItem = new Repository<OrderItem>(_applicationDbContext);
 
         }
 
