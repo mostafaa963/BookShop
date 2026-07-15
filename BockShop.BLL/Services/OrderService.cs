@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using BockShop.BLL.DTOs.Request;
+using BockShop.BLL.DTOs.Response;
 using BockShop.BLL.Exceptions;
 using BockShop.BLL.Interfaces;
 using BockShop.BLL.Specifications;
@@ -19,11 +20,13 @@ namespace BockShop.BLL.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IValidator<CreateOrderRequest> _createOrderRequestValidator;
+        private readonly IValidator<UpdateOrderStatusRequest> _updateOrderStatusRequest;
 
-        public OrderService(IUnitOfWork unitOfWork, IValidator<CreateOrderRequest> createOrderRequestValidator)
+        public OrderService(IValidator<UpdateOrderStatusRequest> updateOrderStatusRequest, IUnitOfWork unitOfWork, IValidator<CreateOrderRequest> createOrderRequestValidator)
         {
-            _createOrderRequestValidator = createOrderRequestValidator;
             _unitOfWork = unitOfWork;
+            _createOrderRequestValidator = createOrderRequestValidator;
+            _updateOrderStatusRequest = updateOrderStatusRequest;
         }
         public async Task CreateOrderAsync(CreateOrderRequest dto, string userId)
         {
@@ -67,6 +70,7 @@ namespace BockShop.BLL.Services
                 UserId = userId,
                 CouponCode = coupon.Code,
                 CreatedAt = DateTime.UtcNow,
+                Status = OrderStatus.Pending,
             };
 
             foreach (var item in cartItem)
@@ -106,5 +110,108 @@ namespace BockShop.BLL.Services
 
 
         }
+        public async Task<IEnumerable<OrdersResponse>> GetAllOrdersAsync(OrderQueryParameters dto, string userId)
+        {
+            var orderSpec = new OrderSpecification(dto, userId);
+
+            var orders = await _unitOfWork.Order.GetAll(orderSpec);
+            return orders.Select(e => new OrdersResponse
+            {
+                Id = e.Id,
+                CreateAt = DateTime.UtcNow,
+                status = e.Status,
+                TotalPrice = e.TotalPrice,
+            });
+
+        }
+        public async Task<OrderDetailsResponse> GetOrderById(int Id, string userId)
+        {
+            if (Id <= 0)
+                throw new ValidationException(new[] {
+                    new ValidationFailure(nameof(Id),"Id Must Be Greater Than 0 "),
+                });
+
+            var orderSpec = new OrderWithItemSpecification(Id, userId);
+            var order = await _unitOfWork.Order.GetOne(orderSpec);
+            if (order == null)
+                throw new NotFoundException("Order Not Found");
+            return new OrderDetailsResponse
+            {
+                CouponCode = order.CouponCode,
+                CreateAt = order.CreatedAt,
+                SubTotal = order.SubTotal,
+                Discount = order.Discount,
+                TotalPrice = order.TotalPrice,
+                Status = order.Status,
+                Items = order.orderItems!.Select(e => new OrderItemResponse
+                {
+                    BookTitle = e.BookTitle,
+                    Quantity = e.Quantity,
+                    TotalPrice = e.TotalPrice,
+                    UnitPrice = e.UnitPrice,
+                    ASIN = e.Book.ASIN,
+
+                })
+            };
+        }
+        public async Task CancelOrder(int orderId, string userId)
+        {
+            if (orderId <= 0)
+                throw new ValidationException(new[] {
+                    new ValidationFailure("OrderId","OrderId Must be Greater than  0")
+                });
+
+            var orderSpec = new OrderWithItemSpecification(orderId, userId);
+            var order = await _unitOfWork.Order.GetOne(orderSpec);
+            if (order == null)
+                throw new NotFoundException("Not Found Order ");
+            if (order.Status == OrderStatus.Cancelled)
+                throw new ValidationException(new[]
+                {
+                    new ValidationFailure("OrderStatus" , "Order is Already Canceled"),
+                });
+
+            if (order.Status == OrderStatus.Shipped || order.Status == OrderStatus.Delivered)
+                throw new ValidationException(new[]
+                  {
+                    new ValidationFailure("OrderStatus" , "Cant be Canceled "),
+                });
+
+            if (!string.IsNullOrEmpty(order.CouponCode))
+            {
+                var coupon = await _unitOfWork.Coupon.GetFirstOneAsync(e => e.Code == order.CouponCode);
+                if (coupon != null)
+                {
+                    var couponUsage = await _unitOfWork.CouponUsage.GetFirstOneAsync(e => e.Code == order.CouponCode && e.userId == userId);
+                    if (couponUsage != null)
+                    {
+                        _unitOfWork.CouponUsage.Delete(couponUsage);
+                    }
+
+                    coupon.CountUsed--;
+                }
+            }
+            foreach (var item in order.orderItems!)
+            {
+                item.Book.Stock += item.Quantity;
+            }
+            order.Status = OrderStatus.Cancelled;
+            await _unitOfWork.SaveChangeAsync();
+
+        }
+        public async Task UpdateOrderStatus(UpdateOrderStatusRequest dto)
+        {
+            var validator = await _updateOrderStatusRequest.ValidateAsync(dto);
+            if (!validator.IsValid)
+                throw new ValidationException(validator.Errors);
+
+            var order = await _unitOfWork.Order.GetByIdAsync(dto.OrderId);
+            if (order == null)
+                throw new NotFoundException("Not Found Order ");
+
+            order.Status = dto.Status;
+            await _unitOfWork.SaveChangeAsync();
+        }
+
     }
 }

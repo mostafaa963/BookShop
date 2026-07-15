@@ -8,7 +8,9 @@ namespace BockShop.DAL.Specifications
     public class Specification<T>
     {
         public bool AsNoTracking { get; protected set; }
+        public Func<IQueryable<T>, IQueryable<T>>? Include { get; protected set; }
         public Expression<Func<T, bool>>? Criteria { get; protected set; }
+        public Expression<Func<T, bool>>? Search { get; protected set; }
 
         public List<Expression<Func<T, object>>?>? Includes { get; }
             = new();
@@ -26,7 +28,6 @@ namespace BockShop.DAL.Specifications
         {
             Includes.Add(include);
         }
-
         protected void ApplyPaging(int skip, int take)
         {
             Skip = skip;

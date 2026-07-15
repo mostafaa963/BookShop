@@ -12,6 +12,8 @@ namespace BockShop.DAL.SpecificationEvaluators
         {
 
             var query = spec.AsNoTracking ? baseQuery.AsNoTracking() : baseQuery;
+            if (spec.Search is not null)
+                query = query.Where(spec.Search);
 
             if (spec.Criteria is not null)
                 query = query.Where(spec.Criteria);
@@ -20,8 +22,12 @@ namespace BockShop.DAL.SpecificationEvaluators
                 foreach (var include in spec.Includes)
                     if (include is not null)
                         query = query.Include(include);
-     
-      
+
+            if (spec.Include != null)
+            {
+                query = spec.Include(query);
+            }
+
             if (spec.OrderBy is not null)
                 query = query.OrderBy(spec.OrderBy);
             if (spec.OrderByDescending is not null)
