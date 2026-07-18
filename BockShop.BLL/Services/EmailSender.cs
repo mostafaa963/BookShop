@@ -15,7 +15,7 @@ namespace BockShop.BLL.Services
             {
                 EnableSsl = true,
                 UseDefaultCredentials = false,
-                Credentials = new NetworkCredential("mstfy200430@gmail.com", "biay mymi ntzw amni")
+                Credentials = new NetworkCredential("", "")
             };
 
             return client.SendMailAsync(
